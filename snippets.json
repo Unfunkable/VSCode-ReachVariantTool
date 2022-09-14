@@ -1,0 +1,12 @@
+{
+	"user defined function":{
+		"prefix": ["function"],
+		"body": ["function ${1:name}()", "\t$0", "end"],
+		"description": "Creates a user defined function."
+	},
+	"user defined enum":{
+		"prefix": ["enum"],
+		"body":["enum ${1:name}", "\t$0", "end"],
+		"description":"Creates a user defined enum."
+	}
+}
