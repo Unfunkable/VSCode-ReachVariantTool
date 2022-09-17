@@ -7,6 +7,10 @@
   "license": "GPL-3.0-only",
   "author": "Unfunkable",
   "publisher": "Unfunkable",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Unfunkable/VSCode-ReachVariantTool"
+  },
   "engines": {
     "vscode": "^1.71.0"
   },

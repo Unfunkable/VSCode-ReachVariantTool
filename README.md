@@ -8,6 +8,9 @@ Basic support for the custom scripting language utilized in DavidJCobb's [Reach 
 - Automatic indentation
 - (Mostly) context aware autocompletion, including function parameters
 
+![image](images/preview1.png)
+![image](images/preview2.png)
+
 ## Notes
 - There is no language server, which means the autocompletion isn't *that* smart - it still can suggest irrelevant autocompletions, but it's much better than nothing. This is still something that would be cool to implement down the line.
 - Since there is no language server, aliased variables will not be counted. Consider appending the variable type to the end of an alias if it really matters to you. (for example, instead of `vip` try `vip_player`)
