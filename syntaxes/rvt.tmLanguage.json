@@ -1,80 +1,158 @@
 {
-  "fileTypes": [
-    "rvt"
-  ],
+  "fileTypes": ["rvt"],
   "name": "rvt",
+  "scopeName": "source.rvt",
   "patterns": [
     {
-      "include": "#main"
+      "include": "#keywords"
+    },
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#functions"
+    },
+    {
+      "include": "#objects"
+    },
+    {
+      "include": "#variables"
+    },
+    {
+      "include": "#parameters"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#symbols"
+    },
+    {
+      "include": "#booleans"
+    },
+    {
+      "include": "#else"
     }
   ],
-  "scopeName": "source.rvt",
   "repository": {
-    "main": {
+    "keywords": {
       "patterns": [
         {
-          "match": "(\\bdeclare\\b|\\bfunction\\b|\\benum\\b|\\balias\\b)",
-          "name": "keyword.rvt"
+          "name": "keyword.control.rvt",
+          "match": "\\b(function|alias|declare|enum)\\b"
         },
         {
-          "match": "(\\bfor\\b|\\bdo\\b|\\bon\\b)",
-          "name": "keyword.control.loop.rvt"
+          "name": "keyword.other.rvt",
+          "match": "\\b(each player|each object|each team|randomly|with label|with network priority|local|low|high|init|local init|host migration|double host migration|object death|pregame)\\b"
         },
         {
-          "match": "(\\bif\\b|\\bnot\\b|\\bthen\\b|\\balt\\b|\\baltif\\b)",
-          "name": "keyword.control.conditional.rvt"
+          "name": "keyword.control.loop.rvt",
+          "match": "\\b(for|do|on)\\b"
         },
         {
-          "match": "(\\bend\\b)",
-          "name": "keyword.control.flow.rvt"
+          "name": "keyword.control.conditional.rvt",
+          "match": "\\b(if|not|then|alt|altif)\\b"
         },
         {
-          "match": "(\\beach player\\b|\\beach object\\b|\\beach team\\b|\\bwith label\\b|\\brandomly\\b|\\bwith network priority\\b|\\blocal\\b|\\blow\\b|\\bhigh\\b|\\binit\\b|\\blocal init\\b|\\bhost migration\\b|\\bdouble host migration\\b|\\bobject death\\b|\\bpregame\\b)",
-          "name": "keyword.other.rvt"
-        },
-        {
-          "match": "(current_player|current_object|current_team|death_event_damage_type|hud_player|hud_player_team|hud_target_object|hud_target_object_team|hud_target_player|hud_target_player_team|killed_object|killer_object|killer_player|no_object|no_player|no_team|no_widget|(?<!_)(global)|(?<!_)(number)|(?<!_)(object)|(?<!_)(player)|(?<!_)(team)|(?<!_)(timer)|\\b(game))",
-          "name": "variable.language.rvt"
-        },
-        {
-          "match": "(true|false|none)",
-          "name": "constant.language.rvt"
-        },
-        {
-          "match": "(betrayal_booting|betrayal_penalty|current_round|dead_players_can_talk|dont_ream_restrict_chat|fireteams_enabled|friendly_fire|grace_period_time|grace_period_timer|grenades_enabled|indestructible_vehicles|lives_per_round|loadout_cam_time|perfection_enabled|powerup_duration_blue|powerup_duration_red|powerup_duration_yellow|proximity_voice|respawn_growth|respawn_time|respawn_growth|respawn_traits_time|round_limit|round_time_limit|round_timer|rounds_to_win|score_to_win|sudden_death_time|sudden_death_timer|suicide_penalty|symmetry|symmetry_get|team_lives_per_round|teams_enabled|end_round|play_sound_for|show_message_to|has_forge_label|is_in_use|is_of_type|is_out_of_bounds|shape_contains|add_weapon|animate_device_position|apply_shape_color_from_player_member|attach_to|copy_rotation_from|delete|detach|enable_spawn_zone|face_toward|get_device_position|get_device_power|get_distance_to|get_orientation|get_speed|(?<=\\.)(kill)|place_at_me|place_between_me_and|push_upward|apply_upward_impulse|remove_weapon|set_device_actual_position|set_device_animation_position|set_device_position|set_device_power|set_garbage_collection_disabled|set_invincibility|set_pickup_permission|set_progress_bar|set_scale|set_shape|set_shape_visibility|set_spawn_location_fireteams|set_spawn_location_permissions|set_waypoint_icon|set_waypoint_priority|set_waypoint_range|set_waypoint_text|set_waypoint_timer|set_waypoint_visibility|set_weapon_pickup_priority|try_get_carrier|get_carrier|assisted_kill_of|is_elite|is_fireteam_leader|is_monitor|is_not_respawning|is_spartan|killer_type_is|add_weapon|apply_traits|force_into_vehicle|get_crosshair_target|get_fireteam|get_scoreboard_pos|get_spree_count|record_griefer_penalty|set_biped|set_co_op_spawning|set_fireteam|set_loadout_palette|set_primary_respawn_object|set_req_purchase_modes|set_requisition_palette|set_round_card_icon|set_round_card_text|set_round_card_title|try_get_armor_ability|get_armor_ability|try_get_death_damage_mod|get_death_damage_mod|try_get_death_damage_type|get_death_damage_type|try_get_killer|get_killer|try_get_vehicle|get_vehicle|try_get_weapon|get_weapon|has_alliance_status|has_any_players|get_scoreboard_pos|set_co_op_spawning|set_primary_respawn_object|is_zero|reset|set_rate|set_icon|set_meter_params|set_text|set_value_text|set_visibility|send_incidnet|set_scenario_interpolator_state|get_random_object|rand)",
-          "name": "support.function.rvt"
-        },
-        {
-          "begin": "(\\\")",
-          "beginCaptures": {
-            "1": {
-              "name": "punctuation.rvt"
-            }
-          },
-          "contentName": "string.quoted.rvt",
-          "end": "(\\\")",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.rvt"
-            }
-          }
-        },
-        {
-          "match": "(--.*)",
-          "name": "comment.line.double-dash.rvt"
-        },
-        {
-          "match": "(=|==|!=|-=|\\+=|/=|\\*=|>=|<=|\\band\\b|\\bor\\b)",
-          "name": "keyword.operator.rvt"
-        },
-        {
-          "match": "((?<![a-zA-Z])[0-9])",
-          "name": "constant.numeric.rvt"
+          "name": "keyword.control.flow.rvt",
+          "match": "\\bend\\b"
         }
       ]
     },
-    "main__1": {
-      "patterns": []
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-dash.rvt",
+          "match": "--.*$"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "entity.name.function.rvt",
+          "match": "[A-Za-z0-9_]+\\(\\)"
+        },
+        {
+          "name": "support.function.rvt",
+          "match": "(betrayal_booting|betrayal_penalty|current_round|dead_players_can_talk|dont_ream_restrict_chat|fireteams_enabled|friendly_fire|grace_period_time|grace_period_timer|grenades_enabled|indestructible_vehicles|lives_per_round|loadout_cam_time|perfection_enabled|powerup_duration_blue|powerup_duration_red|powerup_duration_yellow|proximity_voice|respawn_growth|respawn_time|respawn_growth|respawn_traits_time|round_limit|round_time_limit|round_timer|rounds_to_win|score_to_win|sudden_death_timer|sudden_death_time|suicide_penalty|symmetry|symmetry_get|team_lives_per_round|teams_enabled|end_round|play_sound_for|show_message_to|has_forge_label|is_in_use|is_of_type|is_out_of_bounds|shape_contains|add_weapon|animate_device_position|apply_shape_color_from_player_member|attach_to|copy_rotation_from|delete|detach|enable_spawn_zone|face_toward|get_device_position|get_device_power|get_distance_to|get_orientation|get_speed|(?<=\\.)(kill)|place_at_me|place_between_me_and|push_upward|apply_upward_impulse|remove_weapon|set_device_actual_position|set_device_animation_position|set_device_position|set_device_power|set_garbage_collection_disabled|set_invincibility|set_pickup_permission|set_progress_bar|set_scale|set_shape|set_shape_visibility|set_spawn_location_fireteams|set_spawn_location_permissions|set_waypoint_icon|set_waypoint_priority|set_waypoint_range|set_waypoint_text|set_waypoint_timer|set_waypoint_visibility|set_weapon_pickup_priority|try_get_carrier|get_carrier|assisted_kill_of|is_elite|is_fireteam_leader|is_monitor|is_not_respawning|is_spartan|killer_type_is|add_weapon|apply_traits|force_into_vehicle|get_crosshair_target|get_fireteam|get_scoreboard_pos|get_spree_count|record_griefer_penalty|set_biped|set_co_op_spawning|set_fireteam|set_loadout_palette|set_primary_respawn_object|set_req_purchase_modes|set_requisition_palette|set_round_card_icon|set_round_card_text|set_round_card_title|try_get_armor_ability|get_armor_ability|try_get_death_damage_mod|get_death_damage_mod|try_get_death_damage_type|get_death_damage_type|try_get_killer|get_killer|try_get_vehicle|get_vehicle|try_get_weapon|get_weapon|has_alliance_status|has_any_players|get_scoreboard_pos|set_co_op_spawning|set_primary_respawn_object|is_zero|reset|set_rate|set_icon|set_meter_params|set_text|set_value_text|set_visibility|send_incidnet|set_scenario_interpolator_state|get_random_object|rand)"
+        }
+      ]
+    },
+    "objects": {
+      "patterns": [
+        {
+          "name": "variable.other.global.rvt",
+          "match": "\\b(monitor|mongoose|spartan|elite|flag|bomb|skull|hill_marker|flag_stand|capture_plate|frag_grenade|plasma_grenade|dmr|assault_rifle|plasma_pistol|spiker|needle_rifle|plasma_repeater|energy_sword|magnum|needler|plasma_rifle|rocket_launcher|shotgun|sniper_rifle|beam_rifle|spartan_laser|gravity_hammer|warthog|ghost|scorpion|wraith|banshee|falcon|sabre|sprint|jetpack|armor_lock|active_camo_aa|revenant|pickup_truck|focus_rifle|respawn_zone|plasma_launcher|fusion_coil|initial_spawn_point|health_pack|fireteam_1_respawn_zone|fireteam_2_respawn_zone|fireteam_3_respawn_zone|semi_truck|soccer_ball|golf_ball|golf_club|golf_cup|dice|concussion_rifle|grenade_launcher|phantom_approach|hologram|evade|unsc_data_core|danger_zone|data_core_beam|longsword|particle_emitter_fire|phantom_scenery|covenant_drop_pod|respawn_zone_weak|respawn_zone_weak_anti|phantom_device|resupply_capsule|initial_loadout_camera|invisible_covenant_resupply_capsule|covenant_power_core|fuel_rod_gun|drop_shield|detached_machine_gun_turret|machine_gun_turret|detached_plasma_cannon|plasma_cannon|shade|electric_cart|forklift|oni_van|warthog_turret|warthog_turret_gauss|warthog_turret_rocket|scorpion_turret_anti_infantry|falcon_turret_grenade_left|falcon_turret_grenade_right|wraith_turret_anti_infantry|landmine|target_locator|block_1x1_flat|shade_gun_fuel_rod|shade_gun_plasma|kill_ball|light_red|light_blue|light_green|light_orange|light_purple|light_yellow|light_white|light_red_flashing|light_yellow_flashing|fx_colorblind|fx_gloomy|fx_juicy|fx_nova|fx_olde_timey|fx_pen_and_ink|fx_purple|fx_orange|fx_green|grid|sound_emitter_alarm_1|sound_emitter_alarm_2|safe_boundary|soft_safe_boundary|kill_boundary|soft_kill_boundary|unsc_data_core_holder|covenant_power_module_stand|covenant_bomb|heavy_barrier|breakpoint_bomb_door|killed_object|killer_player)\\b"
+        }
+      ]
+    },
+    "variables": {
+      "patterns": [
+        {
+          "name": "variable.language.rvt",
+          "match": "(global|game|current_object|script_option|script_widget|current_player|hud_player|hud_player_team|hud_target_object|hud_target_object_team|hud_target_player|hud_target_player_team|killed_object|killer_object|killer_player|no_object|no_player|no_team|no_widget|\\b(?<!\\.)number|\\b(?<!\\.)object|\\b(?<!\\.)player|\\b(?<!\\.)team|\\b(?<!\\.)timer)"
+        },
+        {
+          "name": "entity.other.attribute.rvt",
+          "match": "biped|spawn_sequence|score|max_shields|health|max_health|shields|round_timer|round_time_limit|(?<=\\.)([A-Za-z0-9_]+)"
+        }
+      ]
+    },
+    "parameters": {
+      "patterns": [
+        {
+          "name": "variable.parameter.rvt",
+          "match": "(?<=[(,])[^0-9)]*(?=[,)]|\\[)"
+        },
+        {
+          "name": "string.quoted.double.rvt",
+          "match": "\"[^\"]*\""
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.rvt",
+          "match": "\"[^\"]*\""
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.rvt",
+          "match": "\\b[0-9]+\\b"
+        }
+      ]
+    },
+    "symbols": {
+      "patterns": [
+        {
+          "name": "keyword.operator.rvt",
+          "match": "(\\[|\\]|\\(|\\)|\\{|\\}|\\.|\\,|\\:|\\;|\\=|\\+|\\-|\\*|\\/|\\%|\\^|\\!|\\<|\\>|\\&|\\|\\band\\b|\\bor\\b)"
+        }
+      ]
+    },
+    "booleans": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.rvt",
+          "match": "\\b(true|false|none)\\b"
+        }
+      ]
+    },
+    "else": {
+      "patterns": [
+        {
+          "name": "variable.other.rvt",
+          "match": "[A-Za-z0-9_]+"
+        }
+      ]
     }
   }
 }
