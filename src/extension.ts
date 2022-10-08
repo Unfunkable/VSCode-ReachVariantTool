@@ -585,10 +585,10 @@ export function activate(context: vscode.ExtensionContext) {
 				get_vehicle.insertText = new vscode.SnippetString("get_vehicle()$0");
 
 				const try_get_weapon = new vscode.CompletionItem("try_get_weapon", vscode.CompletionItemKind.Function)
-				try_get_weapon.insertText = new vscode.SnippetString("try_get_weapon()$0");
+				try_get_weapon.insertText = new vscode.SnippetString("try_get_weapon(${1|<which>,primary,secondary|})$0");
 
 				const get_weapon = new vscode.CompletionItem("get_weapon", vscode.CompletionItemKind.Function)
-				get_weapon.insertText = new vscode.SnippetString("get_weapon()$0");
+				get_weapon.insertText = new vscode.SnippetString("get_weapon(${1|<which>,primary,secondary|})$0");
 
 				const linePrefix = document.lineAt(position).text.substr(0, position.character);
 				if (!linePrefix.endsWith('player.') && !/player\[[0-9]\]./.test(linePrefix)) {
