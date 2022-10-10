@@ -3,7 +3,7 @@
   "displayName": "Reach Variant Tool",
   "description": "Support for the programming language used in Reach Variant Tool.",
   "icon": "icon.png",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "GPL-3.0-only",
   "author": "Unfunkable",
   "publisher": "Unfunkable",
