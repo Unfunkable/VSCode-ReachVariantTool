@@ -134,7 +134,15 @@ export function activate(context: vscode.ExtensionContext) {
 				hostMigration,
 				doubleHostMigration,
 				objectDeath,
-				local
+				local,
+				new vscode.CompletionItem("killed_object", vscode.CompletionItemKind.Keyword),
+				new vscode.CompletionItem("killer_object", vscode.CompletionItemKind.Keyword),
+				new vscode.CompletionItem("killer_player", vscode.CompletionItemKind.Keyword),
+				new vscode.CompletionItem("death_event_damage_type", vscode.CompletionItemKind.Keyword),
+				new vscode.CompletionItem("hud_target_object", vscode.CompletionItemKind.Keyword),
+				new vscode.CompletionItem("hud_target_object_team", vscode.CompletionItemKind.Keyword),
+				new vscode.CompletionItem("hud_target_player", vscode.CompletionItemKind.Keyword),
+				new vscode.CompletionItem("hud_target_player_team", vscode.CompletionItemKind.Keyword)
 			];
 		}
 	});
@@ -417,6 +425,7 @@ export function activate(context: vscode.ExtensionContext) {
 					has_forge_label,
 					is_in_use,
 					is_of_type,
+					is_out_of_bounds,
 					shape_contains,
 					add_weapon,
 					animate_device_position,
@@ -424,6 +433,7 @@ export function activate(context: vscode.ExtensionContext) {
 					attach_to,
 					copy_rotation_from,
 					obj_delete,
+					detach,
 					enable_spawn_zone,
 					face_toward,
 					get_device_position,
