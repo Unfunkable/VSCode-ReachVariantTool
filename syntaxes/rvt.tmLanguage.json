@@ -105,12 +105,12 @@
     "parameters": {
       "patterns": [
         {
-          "name": "variable.parameter.rvt",
-          "match": "(?<=[(,])[^0-9)]*(?=[,)]|\\[)"
-        },
-        {
           "name": "string.quoted.double.rvt",
           "match": "\"[^\"]*\""
+        },
+        {
+          "name": "variable.parameter.rvt",
+          "match": "(?<=[(,])[^0-9)]*(?=[,)]|\\[)"
         }
       ]
     },
