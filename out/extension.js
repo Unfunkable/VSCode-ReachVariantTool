@@ -15,6 +15,8 @@ function activate(context) {
             forEachObjectLabel.insertText = new vscode.SnippetString("for each object with label \"${1:<label>}\" do\n\t$0\nend");
             const forEachTeam = new vscode.CompletionItem("for each team do");
             forEachTeam.insertText = new vscode.SnippetString("for each team do\n\t$0\nend");
+            const inline = new vscode.CompletionItem("inline");
+            inline.insertText = new vscode.SnippetString("inline: ${1|do,if,altif,alt|}\n\t$0\nend");
             const pregame = new vscode.CompletionItem("on pregame: do");
             pregame.insertText = new vscode.SnippetString("on pregame: do\n\t$0\nend");
             const init = new vscode.CompletionItem("on init: do");
@@ -71,6 +73,8 @@ function activate(context) {
             player.commitCharacters = ['.'];
             const team = new vscode.CompletionItem("team");
             team.commitCharacters = ['.'];
+            const allocateTemporaryVariable = new vscode.CompletionItem("allocate temporary");
+            allocateTemporaryVariable.insertText = new vscode.SnippetString("allocate temporary ${1|<type>,number,object,player,team|}$0");
             return [
                 forEachPlayer,
                 forEachPlayerRandom,
@@ -117,9 +121,14 @@ function activate(context) {
                 new vscode.CompletionItem("killer_player", vscode.CompletionItemKind.Keyword),
                 new vscode.CompletionItem("death_event_damage_type", vscode.CompletionItemKind.Keyword),
                 new vscode.CompletionItem("hud_target_object", vscode.CompletionItemKind.Keyword),
-                new vscode.CompletionItem("hud_target_object_team", vscode.CompletionItemKind.Keyword),
                 new vscode.CompletionItem("hud_target_player", vscode.CompletionItemKind.Keyword),
-                new vscode.CompletionItem("hud_target_player_team", vscode.CompletionItemKind.Keyword)
+                new vscode.CompletionItem("hud_target_player_team", vscode.CompletionItemKind.Keyword),
+                new vscode.CompletionItem("hud_target_team", vscode.CompletionItemKind.Keyword),
+                new vscode.CompletionItem("local_player", vscode.CompletionItemKind.Method),
+                new vscode.CompletionItem("local_team", vscode.CompletionItemKind.Method),
+                new vscode.CompletionItem("allocate", vscode.CompletionItemKind.Keyword),
+                allocateTemporaryVariable,
+                inline,
             ];
         }
     });
@@ -127,6 +136,10 @@ function activate(context) {
         provideCompletionItems(document, position) {
             const show_message_to = new vscode.CompletionItem('show_message_to', vscode.CompletionItemKind.Function);
             show_message_to.insertText = new vscode.SnippetString('show_message_to(${1|<who>,current_player,current_team|}, ${2|<sound>,none,announce_slayer,announce_ctf,announce_ctf_captured|}, \"${3:<text>}\")');
+            const hud_post_message = new vscode.CompletionItem("hud_post_message", vscode.CompletionItemKind.Function);
+            hud_post_message.insertText = new vscode.SnippetString('hud_post_message(${1|<who>,current_player,current_team|}, ${2|<sound>,none,announce_slayer,announce_ctf,announce_ctf_captured|}, \"${3:<text>}\")');
+            const hs_function_call = new vscode.CompletionItem('hs_function_call', vscode.CompletionItemKind.Function);
+            hs_function_call.insertText = new vscode.SnippetString('hs_function_call(${1|<function ID>|})');
             const linePrefix = document.lineAt(position).text.substr(0, position.character);
             if (!linePrefix.endsWith('game.')) {
                 return undefined;
@@ -167,18 +180,24 @@ function activate(context) {
                 new vscode.CompletionItem("symmetry_get", vscode.CompletionItemKind.Method),
                 new vscode.CompletionItem("team_lives_per_round", vscode.CompletionItemKind.Method),
                 new vscode.CompletionItem("teams_enabled", vscode.CompletionItemKind.Method),
+                hs_function_call,
+                hud_post_message,
             ];
         }
     }, '.');
     const globalVariables = vscode.languages.registerCompletionItemProvider('rvt', {
         provideCompletionItems(document, position) {
             const num = new vscode.CompletionItem("number", vscode.CompletionItemKind.Variable);
+            const allocateNum = new vscode.CompletionItem("number", vscode.CompletionItemKind.Variable);
             num.insertText = new vscode.SnippetString("number[${1:n}]$0");
             const obj = new vscode.CompletionItem("object", vscode.CompletionItemKind.Variable);
+            const allocateObj = new vscode.CompletionItem("object", vscode.CompletionItemKind.Variable);
             obj.insertText = new vscode.SnippetString("object[${1:n}]$0");
             const player = new vscode.CompletionItem("player", vscode.CompletionItemKind.Variable);
+            const allocatePlayer = new vscode.CompletionItem("player", vscode.CompletionItemKind.Variable);
             player.insertText = new vscode.SnippetString("player[${1:n}]$0");
             const team = new vscode.CompletionItem("team", vscode.CompletionItemKind.Variable);
+            const allocateTeam = new vscode.CompletionItem("team", vscode.CompletionItemKind.Variable);
             team.insertText = new vscode.SnippetString("team[${1:n}]$0");
             const timer = new vscode.CompletionItem("timer", vscode.CompletionItemKind.Variable);
             timer.insertText = new vscode.SnippetString("timer[${1:n}]$0");
@@ -186,24 +205,38 @@ function activate(context) {
             if (!linePrefix.endsWith('global.')) {
                 return undefined;
             }
-            return [
-                num,
-                obj,
-                player,
-                team,
-                timer,
-            ];
+            if (!linePrefix.includes("allocate")) {
+                return [
+                    num,
+                    obj,
+                    player,
+                    team,
+                    timer,
+                ];
+            }
+            else {
+                return [
+                    allocateNum,
+                    allocateObj,
+                    allocatePlayer,
+                    allocateTeam,
+                ];
+            }
         }
     }, '.');
     const typeObject = vscode.languages.registerCompletionItemProvider('rvt', {
         provideCompletionItems(document, position) {
             const num = new vscode.CompletionItem("number", vscode.CompletionItemKind.Variable);
+            const allocateNum = new vscode.CompletionItem("number", vscode.CompletionItemKind.Variable);
             num.insertText = new vscode.SnippetString("number[${1:n}]$0");
             const obj = new vscode.CompletionItem("object", vscode.CompletionItemKind.Variable);
+            const allocateObj = new vscode.CompletionItem("object", vscode.CompletionItemKind.Variable);
             obj.insertText = new vscode.SnippetString("object[${1:n}]$0");
             const player = new vscode.CompletionItem("player", vscode.CompletionItemKind.Variable);
+            const allocatePlayer = new vscode.CompletionItem("player", vscode.CompletionItemKind.Variable);
             player.insertText = new vscode.SnippetString("player[${1:n}]$0");
             const team = new vscode.CompletionItem("team", vscode.CompletionItemKind.Variable);
+            const allocateTeam = new vscode.CompletionItem("team", vscode.CompletionItemKind.Variable);
             team.insertText = new vscode.SnippetString("team[${1:n}]$0");
             const timer = new vscode.CompletionItem("timer", vscode.CompletionItemKind.Variable);
             timer.insertText = new vscode.SnippetString("timer[${1:n}]$0");
@@ -249,6 +282,8 @@ function activate(context) {
             kill.insertText = new vscode.SnippetString("kill(${1|<silent>,true,false|})");
             const place_at_me = new vscode.CompletionItem("place_at_me", vscode.CompletionItemKind.Function);
             place_at_me.insertText = new vscode.SnippetString("place_at_me(${1|<type>,spartan,elite,monitor,flag,bomb,skull,hill_marker,flag_stand,capture_plate,frag_grenade,plasma_grenade,dmr,assault_rifle,plasma_pistol,spiker,needle_rifle,plasma_repeater,energy_sword,magnum,needler,plasma_rifle,rocket_launcher,shotgun,sniper_rifle,beam_rifle,spartan_laser,gravity_hammer,warthog,ghost,scorpion,wraith,banshee,mongoose,falcon,sabre,sprint,jetpack,armor_lock,active_camo_aa,revenant,pickup_truck,focus_rifle,respawn_zone,plasma_launcher,fusion_coil,initial_spawn_point,health_pack,fireteam_1_respawn_zone,fireteam_2_respawn_zone,fireteam_3_respawn_zone,semi_truck,soccer_ball,golf_ball,golf_club,golf_cup,dice,concussion_rifle,grenade_launcher,phantom_approach,hologram,evade,unsc_data_core,danger_zone,data_core_beam,longsword,particle_emitter_fire,phantom_scenery,pelican_scenery,covenant_drop_pod,respawn_zone_weak,respawn_zone_weak_anti,phantom_device,resupply_capsule,initial_loadout_camera,invisible_covenant_resupply_capsule,covenant_power_core,fuel_rod_gun,drop_shield,detached_machine_gun_turret,machine_gun_turret,detached_plasma_cannon,plasma_cannon,shade,electric_cart,forklift,oni_van,warthog_turret,warthog_turret_gauss,warthog_turret_rocket,scorpion_turret_anti_infantry,falcon_turret_grenade_left,falcon_turret_grenade_right,wraith_turret_anti_infantry,landmine,target_locator,block_1x1_flat,shade_gun_anti_air,shade_gun_fuel_rod,shade_gun_plasma,kill_ball,light_red,light_blue,light_green,light_orange,light_purple,light_yellow,light_white,light_red_flashing,light_yellow_flashing,fx_colorblind,fx_gloomy,fx_juicy,fx_nova,fx_olde_timey,fx_pen_and_ink,fx_purple,fx_orange,fx_green,grid,sound_emitter_alarm_1,sound_emitter_alarm_2,safe_boundary,soft_safe_boundary,kill_boundary,soft_kill_boundary,unsc_data_core_holder,covenant_power_module_stand,covenant_bomb,heavy_barrier,breakpoint_bomb_door|}, ${2:<label>}, ${3|<flags>,none,never_garbage_collect,suppress_effect,absolute_orientation|}, ${4:<x>}, ${5:<y>}, ${6:<z>}, ${7|<variant-string-id>,default,carter,jun,female,male,emile,player_skull,kat,minor,officer,ultra,space,spec_ops,general,zealot,mp,jetpack,gauss,troop,rocket,fr,pl,35_spire_fp|})$0");
+            const create_object = new vscode.CompletionItem("create_object", vscode.CompletionItemKind.Function);
+            create_object.insertText = new vscode.SnippetString("create_object(${1|<type>,spartan,elite,monitor,flag,bomb,skull,hill_marker,flag_stand,capture_plate,frag_grenade,plasma_grenade,dmr,assault_rifle,plasma_pistol,spiker,needle_rifle,plasma_repeater,energy_sword,magnum,needler,plasma_rifle,rocket_launcher,shotgun,sniper_rifle,beam_rifle,spartan_laser,gravity_hammer,warthog,ghost,scorpion,wraith,banshee,mongoose,falcon,sabre,sprint,jetpack,armor_lock,active_camo_aa,revenant,pickup_truck,focus_rifle,respawn_zone,plasma_launcher,fusion_coil,initial_spawn_point,health_pack,fireteam_1_respawn_zone,fireteam_2_respawn_zone,fireteam_3_respawn_zone,semi_truck,soccer_ball,golf_ball,golf_club,golf_cup,dice,concussion_rifle,grenade_launcher,phantom_approach,hologram,evade,unsc_data_core,danger_zone,data_core_beam,longsword,particle_emitter_fire,phantom_scenery,pelican_scenery,covenant_drop_pod,respawn_zone_weak,respawn_zone_weak_anti,phantom_device,resupply_capsule,initial_loadout_camera,invisible_covenant_resupply_capsule,covenant_power_core,fuel_rod_gun,drop_shield,detached_machine_gun_turret,machine_gun_turret,detached_plasma_cannon,plasma_cannon,shade,electric_cart,forklift,oni_van,warthog_turret,warthog_turret_gauss,warthog_turret_rocket,scorpion_turret_anti_infantry,falcon_turret_grenade_left,falcon_turret_grenade_right,wraith_turret_anti_infantry,landmine,target_locator,block_1x1_flat,shade_gun_anti_air,shade_gun_fuel_rod,shade_gun_plasma,kill_ball,light_red,light_blue,light_green,light_orange,light_purple,light_yellow,light_white,light_red_flashing,light_yellow_flashing,fx_colorblind,fx_gloomy,fx_juicy,fx_nova,fx_olde_timey,fx_pen_and_ink,fx_purple,fx_orange,fx_green,grid,sound_emitter_alarm_1,sound_emitter_alarm_2,safe_boundary,soft_safe_boundary,kill_boundary,soft_kill_boundary,unsc_data_core_holder,covenant_power_module_stand,covenant_bomb,heavy_barrier,breakpoint_bomb_door|}, ${2:<label>}, ${3|<flags>,none,never_garbage_collect,suppress_effect,absolute_orientation|}, ${4:<x>}, ${5:<y>}, ${6:<z>}, ${7|<variant-string-id>,default,carter,jun,female,male,emile,player_skull,kat,minor,officer,ultra,space,spec_ops,general,zealot,mp,jetpack,gauss,troop,rocket,fr,pl,35_spire_fp|})$0");
             const place_between_me_and = new vscode.CompletionItem("place_between_me_and", vscode.CompletionItemKind.Function);
             place_between_me_and.insertText = new vscode.SnippetString("place_between_me_and(${1:<other>}, ${2|<type>,spartan,elite,monitor,flag,bomb,skull,hill_marker,flag_stand,capture_plate,frag_grenade,plasma_grenade,dmr,assault_rifle,plasma_pistol,spiker,needle_rifle,plasma_repeater,energy_sword,magnum,needler,plasma_rifle,rocket_launcher,shotgun,sniper_rifle,beam_rifle,spartan_laser,gravity_hammer,warthog,ghost,scorpion,wraith,banshee,mongoose,falcon,sabre,sprint,jetpack,armor_lock,active_camo_aa,revenant,pickup_truck,focus_rifle,respawn_zone,plasma_launcher,fusion_coil,initial_spawn_point,health_pack,fireteam_1_respawn_zone,fireteam_2_respawn_zone,fireteam_3_respawn_zone,semi_truck,soccer_ball,golf_ball,golf_club,golf_cup,dice,concussion_rifle,grenade_launcher,phantom_approach,hologram,evade,unsc_data_core,danger_zone,data_core_beam,longsword,particle_emitter_fire,phantom_scenery,pelican_scenery,covenant_drop_pod,respawn_zone_weak,respawn_zone_weak_anti,phantom_device,resupply_capsule,initial_loadout_camera,invisible_covenant_resupply_capsule,covenant_power_core,fuel_rod_gun,drop_shield,detached_machine_gun_turret,machine_gun_turret,detached_plasma_cannon,plasma_cannon,shade,electric_cart,forklift,oni_van,warthog_turret,warthog_turret_gauss,warthog_turret_rocket,scorpion_turret_anti_infantry,falcon_turret_grenade_left,falcon_turret_grenade_right,wraith_turret_anti_infantry,landmine,target_locator,block_1x1_flat,shade_gun_anti_air,shade_gun_fuel_rod,shade_gun_plasma,kill_ball,light_red,light_blue,light_green,light_orange,light_purple,light_yellow,light_white,light_red_flashing,light_yellow_flashing,fx_colorblind,fx_gloomy,fx_juicy,fx_nova,fx_olde_timey,fx_pen_and_ink,fx_purple,fx_orange,fx_green,grid,sound_emitter_alarm_1,sound_emitter_alarm_2,safe_boundary,soft_safe_boundary,kill_boundary,soft_kill_boundary,unsc_data_core_holder,covenant_power_module_stand,covenant_bomb,heavy_barrier,breakpoint_bomb_door|}, ${3:radius})$0");
             const push_upward = new vscode.CompletionItem("push_upward", vscode.CompletionItemKind.Function);
@@ -277,10 +312,14 @@ function activate(context) {
             set_scale.insertText = new vscode.SnippetString("set_scale(${1:<scale>})");
             const set_shape = new vscode.CompletionItem("set_shape", vscode.CompletionItemKind.Function);
             set_shape.insertText = new vscode.SnippetString("set_shape(${1|<type>,none,sphere,cylinder,box|}$0)");
+            const set_boundary = new vscode.CompletionItem("set_boundary", vscode.CompletionItemKind.Function);
+            set_boundary.insertText = new vscode.SnippetString("set_boundary(${1|<type>,none,sphere,cylinder,box|}$0)");
             const set_shape_visibility = new vscode.CompletionItem("set_shape_visibility", vscode.CompletionItemKind.Function);
             set_shape_visibility.insertText = new vscode.SnippetString("set_shape_visibility(${1|<who>,no_one,everyone,allies,enemies,default,mod_player|}$0)");
             const set_spawn_location_fireteams = new vscode.CompletionItem("set_spawn_location_fireteams", vscode.CompletionItemKind.Function);
             set_spawn_location_fireteams.insertText = new vscode.SnippetString("set_spawn_location_fireteams(${1|<fireteam_indice>,none,all|})$0");
+            const set_fireteam_respawn_filter = new vscode.CompletionItem("set_fireteam_respawn_filter", vscode.CompletionItemKind.Function);
+            set_fireteam_respawn_filter.insertText = new vscode.SnippetString("set_fireteam_respawn_filter(${1|<fireteam_indice>,none,all|})$0");
             const set_spawn_location_permissions = new vscode.CompletionItem("set_spawn_location_permissions", vscode.CompletionItemKind.Function);
             set_spawn_location_permissions.insertText = new vscode.SnippetString("set_spawn_location_permissions(${1|<who>,no_one,everyone,allies,enemies,default,mod_player|}$0)");
             const set_waypoint_icon = new vscode.CompletionItem("set_waypoint_icon", vscode.CompletionItemKind.Function);
@@ -301,80 +340,98 @@ function activate(context) {
             try_get_carrier.insertText = new vscode.SnippetString("try_get_carrier()$0");
             const get_carrier = new vscode.CompletionItem("get_carrier", vscode.CompletionItemKind.Function);
             get_carrier.insertText = new vscode.SnippetString("get_carrier()$0");
+            const set_hidden = new vscode.CompletionItem("set_hidden", vscode.CompletionItemKind.Function);
+            set_hidden.insertText = new vscode.SnippetString("set_hidden(${1|true,false|})");
             const linePrefix = document.lineAt(position).text.substr(0, position.character);
             if (!linePrefix.endsWith('object.') && !linePrefix.endsWith('biped.') && !/object\[[0-9]\]./.test(linePrefix)) {
                 return undefined;
             }
-            return [
-                num,
-                obj,
-                player,
-                team,
-                timer,
-                new vscode.CompletionItem("spawn_sequence", vscode.CompletionItemKind.Property),
-                new vscode.CompletionItem("team", vscode.CompletionItemKind.Property),
-                new vscode.CompletionItem("health", vscode.CompletionItemKind.Method),
-                new vscode.CompletionItem("max_health", vscode.CompletionItemKind.Method),
-                new vscode.CompletionItem("max_shields", vscode.CompletionItemKind.Method),
-                new vscode.CompletionItem("shields", vscode.CompletionItemKind.Method),
-                has_forge_label,
-                is_in_use,
-                is_of_type,
-                is_out_of_bounds,
-                shape_contains,
-                add_weapon,
-                animate_device_position,
-                apply_shape_color_from_player_member,
-                attach_to,
-                copy_rotation_from,
-                obj_delete,
-                detach,
-                enable_spawn_zone,
-                face_toward,
-                get_device_position,
-                get_device_power,
-                get_distance_to,
-                get_orientation,
-                get_speed,
-                kill,
-                place_at_me,
-                push_upward,
-                apply_upward_impulse,
-                remove_weapon,
-                set_device_actual_position,
-                set_device_animation_position,
-                set_device_position,
-                set_device_power,
-                set_garbage_collection_disabled,
-                set_invincibility,
-                set_pickup_permissions,
-                set_progress_bar,
-                set_scale,
-                set_shape,
-                set_shape_visibility,
-                set_spawn_location_fireteams,
-                set_spawn_location_permissions,
-                set_waypoint_icon,
-                set_waypoint_priority,
-                set_waypoint_range,
-                set_waypoint_text,
-                set_waypoint_timer,
-                set_waypoint_visibility,
-                set_weapon_pickup_priority,
-                try_get_carrier,
-                get_carrier
-            ];
+            if (!linePrefix.includes("allocate")) {
+                return [
+                    num,
+                    obj,
+                    player,
+                    team,
+                    timer,
+                    new vscode.CompletionItem("spawn_sequence", vscode.CompletionItemKind.Property),
+                    new vscode.CompletionItem("team", vscode.CompletionItemKind.Property),
+                    new vscode.CompletionItem("health", vscode.CompletionItemKind.Method),
+                    new vscode.CompletionItem("max_health", vscode.CompletionItemKind.Method),
+                    new vscode.CompletionItem("max_shields", vscode.CompletionItemKind.Method),
+                    new vscode.CompletionItem("shields", vscode.CompletionItemKind.Method),
+                    has_forge_label,
+                    is_in_use,
+                    is_of_type,
+                    is_out_of_bounds,
+                    shape_contains,
+                    add_weapon,
+                    animate_device_position,
+                    apply_shape_color_from_player_member,
+                    attach_to,
+                    copy_rotation_from,
+                    obj_delete,
+                    detach,
+                    enable_spawn_zone,
+                    face_toward,
+                    get_device_position,
+                    get_device_power,
+                    get_distance_to,
+                    get_orientation,
+                    get_speed,
+                    kill,
+                    place_at_me,
+                    push_upward,
+                    apply_upward_impulse,
+                    remove_weapon,
+                    set_device_actual_position,
+                    set_device_animation_position,
+                    set_device_position,
+                    set_device_power,
+                    set_garbage_collection_disabled,
+                    set_invincibility,
+                    set_pickup_permissions,
+                    set_progress_bar,
+                    set_scale,
+                    set_shape,
+                    set_shape_visibility,
+                    set_spawn_location_fireteams,
+                    set_spawn_location_permissions,
+                    set_waypoint_icon,
+                    set_waypoint_priority,
+                    set_waypoint_range,
+                    set_waypoint_text,
+                    set_waypoint_timer,
+                    set_waypoint_visibility,
+                    set_weapon_pickup_priority,
+                    try_get_carrier,
+                    get_carrier,
+                    create_object,
+                    set_boundary,
+                ];
+            }
+            else {
+                return [
+                    allocateNum,
+                    allocateObj,
+                    allocatePlayer,
+                    allocateTeam,
+                ];
+            }
         }
     }, '.');
     const typePlayer = vscode.languages.registerCompletionItemProvider('rvt', {
         provideCompletionItems(document, position) {
             const num = new vscode.CompletionItem("number", vscode.CompletionItemKind.Variable);
+            const allocateNum = new vscode.CompletionItem("number", vscode.CompletionItemKind.Variable);
             num.insertText = new vscode.SnippetString("number[${1:n}]$0");
             const obj = new vscode.CompletionItem("object", vscode.CompletionItemKind.Variable);
+            const allocateObj = new vscode.CompletionItem("object", vscode.CompletionItemKind.Variable);
             obj.insertText = new vscode.SnippetString("object[${1:n}]$0");
             const player = new vscode.CompletionItem("player", vscode.CompletionItemKind.Variable);
+            const allocatePlayer = new vscode.CompletionItem("player", vscode.CompletionItemKind.Variable);
             player.insertText = new vscode.SnippetString("player[${1:n}]$0");
             const team = new vscode.CompletionItem("team", vscode.CompletionItemKind.Variable);
+            const allocateTeam = new vscode.CompletionItem("team", vscode.CompletionItemKind.Variable);
             team.insertText = new vscode.SnippetString("team[${1:n}]$0");
             const timer = new vscode.CompletionItem("timer", vscode.CompletionItemKind.Variable);
             timer.insertText = new vscode.SnippetString("timer[${1:n}]$0");
@@ -420,10 +477,16 @@ function activate(context) {
             set_primary_respawn_object.insertText = new vscode.SnippetString("set_primary_respawn_object(${1:<respawn>})");
             const set_round_card_icon = new vscode.CompletionItem("set_round_card_icon", vscode.CompletionItemKind.Function);
             set_round_card_icon.insertText = new vscode.SnippetString("set_round_card_icon(${1|<icon>,none,speaker,dead_teammate_marker,lightning_bolt,bullseye,diamond,bomb,flag,skull,crown,vip,padlock,territory_a,territory_b,territory_c,territory_d,territory_e,territory_f,terrtory_g,territory_h,territory_i,supply,supply_health,supply_air_drop,supply_ammo,arrow,defend,ordnance,inward|})$0");
+            const set_objective_allegiance_icon = new vscode.CompletionItem("set_objective_allegiance_icon", vscode.CompletionItemKind.Function);
+            set_objective_allegiance_icon.insertText = new vscode.SnippetString("set_objective_allegiance_icon(${1|<icon>,none,speaker,dead_teammate_marker,lightning_bolt,bullseye,diamond,bomb,flag,skull,crown,vip,padlock,territory_a,territory_b,territory_c,territory_d,territory_e,territory_f,terrtory_g,territory_h,territory_i,supply,supply_health,supply_air_drop,supply_ammo,arrow,defend,ordnance,inward|})$0");
             const set_round_card_text = new vscode.CompletionItem("set_round_card_text", vscode.CompletionItemKind.Function);
             set_round_card_text.insertText = new vscode.SnippetString("set_round_card_text(${1:<text>})$0");
+            const set_objective_allegiance_name = new vscode.CompletionItem("set_objective_allegiance_name", vscode.CompletionItemKind.Function);
+            set_objective_allegiance_name.insertText = new vscode.SnippetString("set_objective_allegiance_name(${1:<text>})$0");
             const set_round_card_title = new vscode.CompletionItem("set_round_card_title", vscode.CompletionItemKind.Function);
             set_round_card_title.insertText = new vscode.SnippetString("set_round_card_title(${1:<text>})$0");
+            const set_objective_text = new vscode.CompletionItem("set_objective_text", vscode.CompletionItemKind.Function);
+            set_objective_text.insertText = new vscode.SnippetString("set_objective_text(${1:<text>})$0");
             const try_get_armor_ability = new vscode.CompletionItem("try_get_armor_ability", vscode.CompletionItemKind.Function);
             try_get_armor_ability.insertText = new vscode.SnippetString("try_get_armor_ability()$0");
             const get_armor_ability = new vscode.CompletionItem("get_armor_ability", vscode.CompletionItemKind.Function);
@@ -448,69 +511,98 @@ function activate(context) {
             try_get_weapon.insertText = new vscode.SnippetString("try_get_weapon(${1|<which>,primary,secondary|})$0");
             const get_weapon = new vscode.CompletionItem("get_weapon", vscode.CompletionItemKind.Function);
             get_weapon.insertText = new vscode.SnippetString("get_weapon(${1|<which>,primary,secondary|})$0");
+            const get_button_press_duration = new vscode.CompletionItem("get_button_press_duration", vscode.CompletionItemKind.Function);
+            get_button_press_duration.insertText = new vscode.SnippetString("get_button_press_duration(${1|<button>,jump,switch_grenade,context_primary,melee_attack,equipment,throw_grenade,fire_primary,crouch,scope_zoom,night_vision,fire_secondary,fire_tertiary,vehicle_trick|)$0");
+            const get_button_time = new vscode.CompletionItem("get_button_time", vscode.CompletionItemKind.Function);
+            get_button_time.insertText = new vscode.SnippetString("get_button_time(${1|<button>,jump,switch_grenade,context_primary,melee_attack,equipment,throw_grenade,fire_primary,crouch,scope_zoom,night_vision,fire_secondary,fire_tertiary,vehicle_trick|)$0");
+            const set_vehicle_spawning_enabled = new vscode.CompletionItem("set_vehicle_spawning_enabled", vscode.CompletionItemKind.Function);
+            set_vehicle_spawning_enabled.insertText = new vscode.SnippetString("set_vehicle_spawning_enabled(${1|true,false|})$0");
+            const set_respawn_vehicle = new vscode.CompletionItem("set_respawn_vehicle", vscode.CompletionItemKind.Function);
+            set_respawn_vehicle.insertText = new vscode.SnippetString("set_respawn_vehicle(${1|<vehicle type>,warthog,ghost,scorpion,wraith,banshee,mongoose,falcon,sabre,revenant,pickup_truck,semi_truck,machine_gun_turret,plasma_cannon,shade,electric_cart,forklift,oni_van,warthog_turret,warthog_turret_gauss,warthog_turret_rocket,scorpion_turret_anti_infantry,falcon_turret_grenade_left,falcon_turret_grenade_right,wraith_turret_anti_infantry,shade_gun_anti_air,shade_gun_fuel_rod,shade_gun_plasma|})$0");
             const linePrefix = document.lineAt(position).text.substr(0, position.character);
             if (!linePrefix.endsWith('player.') && !/player\[[0-9]\]./.test(linePrefix)) {
                 return undefined;
             }
-            return [
-                num,
-                obj,
-                player,
-                team,
-                timer,
-                new vscode.CompletionItem("biped", vscode.CompletionItemKind.Property),
-                new vscode.CompletionItem("rating", vscode.CompletionItemKind.Property),
-                new vscode.CompletionItem("score", vscode.CompletionItemKind.Property),
-                script_stat,
-                new vscode.CompletionItem("team", vscode.CompletionItemKind.Property),
-                new vscode.CompletionItem("frag_grenades", vscode.CompletionItemKind.Method),
-                new vscode.CompletionItem("plasma_grenades", vscode.CompletionItemKind.Method),
-                assisted_kill_of,
-                is_elite,
-                is_fireteam_leader,
-                is_monitor,
-                is_not_respawning,
-                is_spartan,
-                killer_type_is,
-                add_weapon,
-                apply_traits,
-                force_into_vehicle,
-                get_crosshair_target,
-                get_fireteam,
-                get_scoreboard_pos,
-                get_spree_count,
-                set_biped,
-                set_co_op_spawning,
-                set_fireteam,
-                set_loadout_palette,
-                set_primary_respawn_object,
-                set_round_card_icon,
-                set_round_card_text,
-                set_round_card_title,
-                try_get_armor_ability,
-                get_armor_ability,
-                try_get_death_damage_mod,
-                get_death_damage_mod,
-                try_get_death_damage_type,
-                get_death_damage_type,
-                try_get_killer,
-                get_killer,
-                try_get_vehicle,
-                get_vehicle,
-                try_get_weapon,
-                get_weapon
-            ];
+            if (!linePrefix.includes("allocate")) {
+                return [
+                    num,
+                    obj,
+                    player,
+                    team,
+                    timer,
+                    new vscode.CompletionItem("biped", vscode.CompletionItemKind.Property),
+                    new vscode.CompletionItem("rating", vscode.CompletionItemKind.Property),
+                    new vscode.CompletionItem("score", vscode.CompletionItemKind.Property),
+                    script_stat,
+                    new vscode.CompletionItem("team", vscode.CompletionItemKind.Property),
+                    new vscode.CompletionItem("frag_grenades", vscode.CompletionItemKind.Method),
+                    new vscode.CompletionItem("plasma_grenades", vscode.CompletionItemKind.Method),
+                    assisted_kill_of,
+                    is_elite,
+                    is_fireteam_leader,
+                    is_monitor,
+                    is_not_respawning,
+                    is_spartan,
+                    killer_type_is,
+                    add_weapon,
+                    apply_traits,
+                    force_into_vehicle,
+                    get_crosshair_target,
+                    get_fireteam,
+                    get_scoreboard_pos,
+                    get_spree_count,
+                    set_biped,
+                    set_co_op_spawning,
+                    set_fireteam,
+                    set_loadout_palette,
+                    set_primary_respawn_object,
+                    set_round_card_icon,
+                    set_round_card_text,
+                    set_round_card_title,
+                    try_get_armor_ability,
+                    get_armor_ability,
+                    try_get_death_damage_mod,
+                    get_death_damage_mod,
+                    try_get_death_damage_type,
+                    get_death_damage_type,
+                    try_get_killer,
+                    get_killer,
+                    try_get_vehicle,
+                    get_vehicle,
+                    try_get_weapon,
+                    get_weapon,
+                    get_button_press_duration,
+                    get_button_time,
+                    set_vehicle_spawning_enabled,
+                    set_respawn_vehicle,
+                    new vscode.CompletionItem("money", vscode.CompletionItemKind.Method),
+                    set_objective_text,
+                    set_objective_allegiance_name,
+                ];
+            }
+            else {
+                return [
+                    allocateNum,
+                    allocateObj,
+                    allocatePlayer,
+                    allocateTeam,
+                ];
+            }
         }
     }, '.');
     const typeTeam = vscode.languages.registerCompletionItemProvider('rvt', {
         provideCompletionItems(document, position) {
             const num = new vscode.CompletionItem("number", vscode.CompletionItemKind.Variable);
+            const allocateNum = new vscode.CompletionItem("number", vscode.CompletionItemKind.Variable);
             num.insertText = new vscode.SnippetString("number[${1:n}]$0");
             const obj = new vscode.CompletionItem("object", vscode.CompletionItemKind.Variable);
+            const allocateObj = new vscode.CompletionItem("object", vscode.CompletionItemKind.Variable);
             obj.insertText = new vscode.SnippetString("object[${1:n}]$0");
             const player = new vscode.CompletionItem("player", vscode.CompletionItemKind.Variable);
+            const allocatePlayer = new vscode.CompletionItem("player", vscode.CompletionItemKind.Variable);
             player.insertText = new vscode.SnippetString("player[${1:n}]$0");
             const team = new vscode.CompletionItem("team", vscode.CompletionItemKind.Variable);
+            const allocateTeam = new vscode.CompletionItem("team", vscode.CompletionItemKind.Variable);
             team.insertText = new vscode.SnippetString("team[${1:n}]$0");
             const timer = new vscode.CompletionItem("timer", vscode.CompletionItemKind.Variable);
             timer.insertText = new vscode.SnippetString("timer[${1:n}]$0");
@@ -526,24 +618,40 @@ function activate(context) {
             set_co_op_spawning.insertText = new vscode.SnippetString("set_co_op_spawning(${1|<enable>,true,false|})$0");
             const set_primary_respawn_object = new vscode.CompletionItem("set_primary_respawn_object", vscode.CompletionItemKind.Function);
             set_primary_respawn_object.insertText = new vscode.SnippetString("set_primary_respawn_object(${1:<respawn>})");
+            const set_vehicle_spawning_enabled = new vscode.CompletionItem("set_vehicle_spawning_enabled", vscode.CompletionItemKind.Function);
+            set_vehicle_spawning_enabled.insertText = new vscode.SnippetString("set_vehicle_spawning_enabled(${1|true,false|})$0");
+            const set_respawn_vehicle = new vscode.CompletionItem("set_respawn_vehicle", vscode.CompletionItemKind.Function);
+            set_respawn_vehicle.insertText = new vscode.SnippetString("set_respawn_vehicle(${1|<vehicle type>,warthog,ghost,scorpion,wraith,banshee,mongoose,falcon,sabre,revenant,pickup_truck,semi_truck,machine_gun_turret,plasma_cannon,shade,electric_cart,forklift,oni_van,warthog_turret,warthog_turret_gauss,warthog_turret_rocket,scorpion_turret_anti_infantry,falcon_turret_grenade_left,falcon_turret_grenade_right,wraith_turret_anti_infantry,shade_gun_anti_air,shade_gun_fuel_rod,shade_gun_plasma|})$0");
             const linePrefix = document.lineAt(position).text.substr(0, position.character);
             if (!linePrefix.endsWith('team.') && !/team\[[0-9]\]./.test(linePrefix)) {
                 return undefined;
             }
-            return [
-                num,
-                obj,
-                player,
-                team,
-                timer,
-                new vscode.CompletionItem("score", vscode.CompletionItemKind.Property),
-                script_stat,
-                has_alliance_status,
-                has_any_players,
-                get_scoreboard_pos,
-                set_co_op_spawning,
-                set_primary_respawn_object
-            ];
+            if (!linePrefix.includes("allocate")) {
+                return [
+                    num,
+                    obj,
+                    player,
+                    team,
+                    timer,
+                    new vscode.CompletionItem("score", vscode.CompletionItemKind.Property),
+                    script_stat,
+                    has_alliance_status,
+                    has_any_players,
+                    get_scoreboard_pos,
+                    set_co_op_spawning,
+                    set_primary_respawn_object,
+                    set_vehicle_spawning_enabled,
+                    set_respawn_vehicle,
+                ];
+            }
+            else {
+                return [
+                    allocateNum,
+                    allocateObj,
+                    allocatePlayer,
+                    allocateTeam,
+                ];
+            }
         }
     }, '.');
     const typeTimer = vscode.languages.registerCompletionItemProvider('rvt', {
