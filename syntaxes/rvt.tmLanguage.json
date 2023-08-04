@@ -7,6 +7,9 @@
       "include": "#keywords"
     },
     {
+      "include": "#blockcomment"
+    },
+    {
       "include": "#comments"
     },
     {
@@ -61,6 +64,16 @@
           "match": "\\bend\\b"
         }
       ]
+    },
+    "blockcomment": {
+      "begin": "--\\[(=*)\\[",
+      "captures": {
+        "0": {
+          "name": "punctuation.definition.comment.rvt"
+        }
+      },
+      "end": "\\]\\1\\]",
+      "name": "comment.block.rvt"
     },
     "comments": {
       "patterns": [
