@@ -1,5 +1,10 @@
 # Change Log
 
+## [v0.4.0] - 2023-08-05
+- Autocompleting `if` statements now automatically inserts a placeholder `<condition>`, `then` and `end`
+- `end` is now automatically inserted after `then` and `do:`
+- `inline` is now correctly syntax highlighted.
+
 ## [v0.3.0] - 2023-08-04
 - Support for RVT 2.2, including the new functions & names, block comments, allocation, etc.
 
