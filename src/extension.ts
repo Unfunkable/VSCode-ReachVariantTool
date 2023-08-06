@@ -46,6 +46,8 @@ export function activate(context: vscode.ExtensionContext) {
 			local.insertText = new vscode.SnippetString("on local: do\n\t$0\nend");
 
 			const keywordThen = new vscode.CompletionItem("then", vscode.CompletionItemKind.Keyword)
+			keywordThen.insertText = new vscode.SnippetString("then\n\t$0\nend")
+		
 			const keywordIf = new vscode.CompletionItem("if", vscode.CompletionItemKind.Keyword)
 			const keywordDo = new vscode.CompletionItem("do", vscode.CompletionItemKind.Keyword)
 			const keywordEnd = new vscode.CompletionItem("end", vscode.CompletionItemKind.Keyword)
