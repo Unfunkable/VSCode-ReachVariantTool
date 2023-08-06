@@ -45,7 +45,7 @@
       "patterns": [
         {
           "name": "keyword.control.rvt",
-          "match": "\\b(function|alias|declare|enum|allocate)\\b"
+          "match": "\\b(function|alias|declare|enum|allocate|inline)\\b"
         },
         {
           "name": "keyword.other.rvt",
