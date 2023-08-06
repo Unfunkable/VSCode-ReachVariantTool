@@ -48,8 +48,12 @@ export function activate(context: vscode.ExtensionContext) {
 			const keywordThen = new vscode.CompletionItem("then", vscode.CompletionItemKind.Keyword)
 			keywordThen.insertText = new vscode.SnippetString("then\n\t$0\nend")
 		
-			const keywordIf = new vscode.CompletionItem("if", vscode.CompletionItemKind.Keyword)
+			const keywordIf = new vscode.CompletionItem("if ", vscode.CompletionItemKind.Keyword)
+			keywordIf.insertText = new vscode.SnippetString("if ${1:<condition>} then\n\t$0\nend")
+
 			const keywordDo = new vscode.CompletionItem("do", vscode.CompletionItemKind.Keyword)
+			keywordDo.insertText = new vscode.SnippetString("do:\n\t$0\nend")
+
 			const keywordEnd = new vscode.CompletionItem("end", vscode.CompletionItemKind.Keyword)
 			const keywordDeclare = new vscode.CompletionItem("declare", vscode.CompletionItemKind.Keyword)
 			const keywordAlias = new vscode.CompletionItem("alias", vscode.CompletionItemKind.Keyword)
