@@ -36,7 +36,7 @@ function activate(context) {
             const keywordIf = new vscode.CompletionItem("if ", vscode.CompletionItemKind.Keyword);
             keywordIf.insertText = new vscode.SnippetString("if ${1:<condition>} then\n\t$0\nend");
             const keywordDo = new vscode.CompletionItem("do", vscode.CompletionItemKind.Keyword);
-            keywordDo.insertText = new vscode.SnippetString("do:\n\t$0\nend");
+            keywordDo.insertText = new vscode.SnippetString("do\n\t$0\nend");
             const keywordEnd = new vscode.CompletionItem("end", vscode.CompletionItemKind.Keyword);
             const keywordDeclare = new vscode.CompletionItem("declare", vscode.CompletionItemKind.Keyword);
             const keywordAlias = new vscode.CompletionItem("alias", vscode.CompletionItemKind.Keyword);
@@ -254,7 +254,7 @@ function activate(context) {
             const shape_contains = new vscode.CompletionItem("shape_contains", vscode.CompletionItemKind.Function);
             shape_contains.insertText = new vscode.SnippetString("shape_contains(${1:other})$0");
             const add_weapon = new vscode.CompletionItem("add_weapon", vscode.CompletionItemKind.Function);
-            add_weapon.insertText = new vscode.SnippetString("add_weapon(${1:weapon}, ${2|mode,primary,secondary,force|})$0");
+            add_weapon.insertText = new vscode.SnippetString("add_weapon(${1|<weapon>,flag,bomb,skull,dmr,assault_rifle,plasma_pistol,spiker,needle_rifle,plasma_repeater,energy_sword,magnum,needler,plasma_rifle,rocket_launcher,shotgun,sniper_rifle,beam_rifle,spartan_laser,gravity_hammer,focus_rifle,plasma_launcher,golf_club,concussion_rifle,grenade_launcher,unsc_data_core,fuel_rod_gun,detached_machine_gun_turret,detached_plasma_cannon,target_locator,covenant_bomb|}, ${2|<mode>,primary,secondary,force|})$0");
             const animate_device_position = new vscode.CompletionItem("animate_device_position", vscode.CompletionItemKind.Function);
             animate_device_position.insertText = new vscode.SnippetString("animate_device_position(${1:animation_target}, ${2:animation_duration}, ${3:acceleration}, ${4:deceleration})$0");
             const apply_shape_color_from_player_member = new vscode.CompletionItem("apply_shape_color_from_player_member", vscode.CompletionItemKind.Function);
@@ -346,7 +346,7 @@ function activate(context) {
             const set_hidden = new vscode.CompletionItem("set_hidden", vscode.CompletionItemKind.Function);
             set_hidden.insertText = new vscode.SnippetString("set_hidden(${1|true,false|})");
             const linePrefix = document.lineAt(position).text.substr(0, position.character);
-            if (!linePrefix.endsWith('object.') && !linePrefix.endsWith('biped.') && !/object\[[0-9]\]./.test(linePrefix)) {
+            if (!linePrefix.endsWith('object.') && !linePrefix.endsWith('biped.') && !/object\[[0-9]\]./.test(linePrefix) && !linePrefix.endsWith('obj.')) {
                 return undefined;
             }
             if (!linePrefix.includes("allocate")) {
