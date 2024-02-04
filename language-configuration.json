@@ -24,7 +24,7 @@
     ["'", "'"]
   ],
   "indentationRules": {
-    "increaseIndentPattern": "do|then|altif|alt",
-    "decreaseIndentPattern": "end|altif|alt"
+    "increaseIndentPattern": "\\b(do|then|altif|alt)\\b",
+    "decreaseIndentPattern": "\\b(end|altif|alt)\\b"
   }
 }
