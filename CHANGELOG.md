@@ -1,8 +1,21 @@
 # Change Log
 
+<<<<<<< Updated upstream
 ## [v0.4.0] - 2023-08-05
 - Autocompleting `if` statements now automatically inserts a placeholder `<condition>`, `then` and `end`
 - `end` is now automatically inserted after `then` and `do:`
+=======
+## [v0.5.0] - 2024-02-03
+- Aliases ending with `obj` can now trigger object type autocompletion
+- Indentation rules now have word barriers, which means words like `health` won't unintentionally indent as if `alt` was written
+- `do:` autocompletion was fixed and is now `do`
+- `object.set_pickup_permissions` function is now correctly highlighted
+- `object.add_weapon` funciton now has autocompletion parameters
+
+## [v0.4.0] - 2023-08-05
+- Autocompleting `if` statements now automatically inserts a placeholder `<condition>`, `then` and `end`
+- `end` is now automatically inserted after `then` and `do`
+>>>>>>> Stashed changes
 - `inline` is now correctly syntax highlighted.
 
 ## [v0.3.0] - 2023-08-04

@@ -3,7 +3,11 @@
   "displayName": "Reach Variant Tool",
   "description": "Support for the programming language used in Reach Variant Tool.",
   "icon": "icon.png",
+<<<<<<< Updated upstream
   "version": "0.4.0",
+=======
+  "version": "0.5.0",
+>>>>>>> Stashed changes
   "license": "GPL-3.0-only",
   "author": "Unfunkable",
   "publisher": "Unfunkable",
